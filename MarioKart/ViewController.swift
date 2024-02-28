@@ -64,9 +64,18 @@ class ViewController: UIViewController,
     // Exercise 1: Assign the result of MushroomGenerator.maybeGenerateMushroomPowerup()
     // to a variable. Print something if it's not nil
     // ...
+      // Exercise 2: Use the powerup on Mario using the useMushroomPowerupOnMario function
+      // ...
     
-    // Exercise 2: Use the powerup on Mario using the useMushroomPowerupOnMario function
-    // ...
+      if let powerup = MushroomGenerator.maybeGenerateMushroomPowerup() {
+          useMushroomPowerupOnMario(powerup: powerup)
+      }
+      
+     
+   
+     
+      
+      
   }
   
   private func useMushroomPowerupOnMario(powerup: MushroomPowerup) {
@@ -82,6 +91,30 @@ class ViewController: UIViewController,
   
   // Exercise 3: Decipher the mystery box and apply the correct effect on mario
   private func decipher(mysteryBox: MysteryBox) {
+      // Attempt to cast "mysteryEffect" to a Dictionary with a key of type String and value of type String
+          // Assign the result to the variable "effectDictionary"
+          guard let effectDictionary = mysteryBox.mysteryEffect as? [String: String] else {
+            // If the cast fails, then throw an error and early return
+            assertionFailure("Expecting value of type dictionary")
+            return
+          }
+          // Make sure the effectDictionary["effect"] has a non-nil value
+          // and assign the result to the "effect" variable
+          guard let effect = effectDictionary["effect"] else {
+            // If the value is nil, throw an error and early return
+            assertionFailure("Expecting value of type String")
+            return
+          }
+          // Apply the correct effect to Mario
+          if effect == "translate" {
+            translate(kart: kartView1, by: view.bounds.width)
+          } else if effect == "rotate" {
+            rotate(kart: kartView1)
+          } else if effect == "scale" {
+            scale(kart: kartView1)
+          } else {
+            assertionFailure("Unexpected effect")
+          }
     
   }
   
@@ -132,11 +165,31 @@ class ViewController: UIViewController,
   
   // Exercise 4: Implement applyNumKartsSetting to show the correct number of karts
   func applyNumKartsSetting(_ settings: [String : Any]) {
+      // Optionally cast the value of `settings["numKarts"]` to an Int and assign it to `numKarts`
+        guard let numKarts = settings["numKarts"] as? Int else {
+          // If the cast fails, then throw an assertion and early terminate
+          assertionFailure("Expecting Int, but got nil")
+          return
+        }
+        // unhide the correct number of karts
+        kartView0.isHidden = numKarts < 2
+        kartView2.isHidden = numKarts < 3
+      
+      
     
   }
   
   // Exercise 5: Implement applyKartSizeSetting to set the correct kart size
   func applyKartSizeSetting(_ settings: [String : Any]) {
+      guard let kartSizeMultiplier = settings["kartSize"] as? Int else {
+        assertionFailure("Expecting Int, but got nil")
+        return
+      }
+      let kartSize = 1.0 + 0.05 * Double(kartSizeMultiplier)
+      let transform = CGAffineTransformIdentity.scaledBy(x: kartSize, y: kartSize)
+      kartView0.transform = transform
+      kartView1.transform = transform
+      kartView2.transform = transform
     
   }
   
